@@ -1,4 +1,7 @@
+from django.conf import settings
 from django.shortcuts import render
+from django.core.mail import send_mail
+
 
 from .forms import SignUpForm, ContactForm
 # Create your views here.
@@ -32,10 +35,24 @@ def contact(request):
         # for key in form.cleaned_data:
         #     print key
         #     print form.cleaned_data.get(key)
-        email = form.cleaned_data.get("email")
-        full_name = form.cleaned_data.get("full_name")
-        message = form.cleaned_data.get("message")
-        print email,full_name,message
+        form_email = form.cleaned_data.get("email")
+        form_full_name = form.cleaned_data.get("full_name")
+        form_message = form.cleaned_data.get("message")
+        #print email,full_name,message
+        subject = 'Site Contact Form'
+        from_email = settings.EMAIL_HOST_USER
+        to_email = [from_email, 'gagan.globin76@gmail.com']
+        contact_message = " %s: %s via %s  "% (
+            form_full_name,
+            form_message,
+            form_email)
+        
+        
+        send_mail(subject,
+                  contact_message,
+                  from_email,
+                  to_email,
+                  fail_silently=False)
     context = {
         "form": form
     }
